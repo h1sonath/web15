@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hỏi Nhanh</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/ask">Hỏi Nhanh</a></li>
+            <li><a href="/answer">Đáp Gọn</a></li>
+        </ul>
+    </nav>
+    <div>
+        <h1>Hỏi đi</h1>
+        <form action="/creatquestions" method="POST">
+            <textarea name="questionContent" id="questionContent1" cols="30" rows="10" maxlength="200"></textarea>
+            <span>Còn <span id="remain">200</span>/200 kí tự</span>
+            <button type="submit">Hỏi</button>
+        </form>
+    </div>
+    
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script src="ask.js"></script>
+</body>
+</html>
