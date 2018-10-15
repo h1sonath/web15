@@ -1,63 +1,80 @@
 const express = require('express');
-const bodyParser= require('body-parser');
+const bodyParser = require('body-parser');
 const fs = require('fs');
 const app = express();
-const questionList = require('./questions.json');
-let questionRandom;
-
-app.use(bodyParser.urlencoded({extended: false}));
-
-app.get('/answer', (req,res) => {
-    res.sendFile(__dirname + '/public/answer.html')
+const mongoose = require('mongoose');
+const QuestionModel = require('./model/questionModel')
+mongoose.connect('mongodb://localhost/quyetde', (err) => {
+    if (err) console.log(err)
+    else console.log('DB connect success')
 })
 
-app.get('/vote', (req,res) => {
-    res.sendFile(__dirname + '/public/vote.html');
-})
 
-app.get('/', (req,res) => {
-    res.sendFile(__dirname + '/public/answer.html')
-})
+app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('/ask', (req,res) => {
-    res.sendFile(__dirname + '/public/ask.html');
-})
-
-app.post('/creatquestions', (req,res) => {
-    console.log(req.body);   
-    const newQuest = {
-        id: questionList.length,
-        questionContent: req.body.questionContent,
-        yes:0,
-        no: 0,
-    };
-
-    questionList.push(newQuest);
-
-    fs.writeFileSync('./questions.json', JSON.stringify(questionList));
-
-    res.redirect('/answer');
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/answer.html');
 });
+
+app.get('/ask', (req, res) => {
+    res.sendFile(__dirname + '/public/ask.html');
+});
+
+app.get('/answer', (req, res) => {
+    res.sendFile(__dirname + '/public/answer.html');
+});
+
+app.post('/createquestions', (req, res) => {
+ 
+
+
+    // const newQuestion = new QuestionModel({
+    //     questionContent: req.body.questionContent,
+    //     yes: 0,
+    //     no: 0
+    // })
+    QuestionModel.create(
+        {questionContent:req.body.questionContent },
+        (err, questionCreated)=>{
+            if(err) console.log(err)
+            else res.redirect('/question/' + questionCreated._id);
+
+        }
+    )
+//     newQuestion.save();
+//     res.redirect('/answer');
+});
+
 app.get('/randomquestion', (req, res) => {
-    if(questionList.length>0){
-     questionRandom = questionList[Math.floor(Math.random()*questionList.length)];
+    //findOne
+    let questionList = JSON.parse(fs.readFileSync('./questions.json'));
+
+    if (questionList.length > 0) {
+        let randomIndex = Math.floor(Math.random() * questionList.length);
+        let questionRandom = questionList[randomIndex];
+        question = questionRandom;
         res.send(questionRandom);
     }
 });
-app.get('/voteQuest', (req,res) => {
-    let questionList =JSON.parse(fs.readFileSync('./questions.json'));
-    if(questionList.length > 0){
-        let voteQuest = questionRandom;
-        res.send(voteQuest); 
-    }
+
+app.post('/answer', (req, res) => {
+    const { questionid, answer } = req.body;
+    // const questionid = req.body.questionid;
+    // const answer = req.body.answer;
+    // let questionList = JSON.parse(fs.readFileSync('./questions.json'));
+    // questionList[questionid][answer] += 1;
+    // fs.writeFileSync('./questions.json', JSON.stringify(questionList));
+    // res.send({ success: 1 });
 });
 
-app.post('/answer', (req,res) => {
-    const {questionid, answer} = req.body;
-    let questionList =JSON.parse(fs.readFileSync('./questions.json'));
-    questionList[questionid][answer] +=1;
-    fs.writeFileSync('./questions.json', JSON.stringify(questionList));
-    res.send({success: 1});
+app.get('/question/:questionId', (req, res) => {
+    res.sendFile(__dirname + "/public/vote.html");
+});
+
+app.get('/questiondetail/:questionId', (req, res) => {
+    let questionId = req.params.questionId;
+    let questionList = JSON.parse(fs.readFileSync('./questions.json'));
+    res.send({ success: 1, question: questionList[questionId] });
 });
 
 app.use(express.static('public'));
