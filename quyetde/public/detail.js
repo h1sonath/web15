@@ -15,7 +15,8 @@ $.ajax({
 			$('#totalVote span').text(totalVote);
 			$('#voteYes span').text(totalVote != 0 ? parseFloat(voteYes) : 0);
 			$('#voteNo span').text(totalVote != 0 ? parseFloat(voteNo) : 0);
-
+			document.getElementById("voteYes").style.width= voteYes+ "%";
+			document.getElementById("voteNo").style.width= voteNo+ "%";
 			// if(totalVote != 0) {
 			// 	return parseFloat(voteYes);
 			// } else {

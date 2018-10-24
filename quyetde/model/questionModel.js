@@ -9,8 +9,10 @@ const QuestionSchema = new Schema({
 })
 
 const QuestionModel = mongoose.model('Question', QuestionSchema);
-QuestionModel.findOne({"questionContent": 'abc'}), (err, questions)=> {
-    if(err) console.log(err)
-    else console.log('question', questions);
-}
+// QuestionModel.findOne({"questionContent": 'abc'}), (err, questions)=> {
+//     if(err) console.log(err)
+//     else console.log('question', questions);
+// }
 module.exports = mongoose.model('Question', QuestionSchema);
+
+

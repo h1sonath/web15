@@ -4,21 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" type="text/css" href="/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>KẾT QUẢ</title>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="/ask">Hỏi Nhanh</a></li>
-            <li><a href="/answer">Đáp Gọn</a></li>
-        </ul>
-    </nav>
-    <div>
-        <h1 id="questionContent"></h1>
-        <p id="totalVote"><span></span>vote</p>
-        <p id="voteYes">Yes: <span></span>%</p>
-        <p id="voteNo">No: <span></span>%</p>
-        <a href="/"> <button id= 'otherQuestion'>Xem câu hỏi khác</button></a>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <a class="navbar-brand" href="/answer">Hỏi nhanh đáp gọn</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="nav navbar-nav mr-auto">
+                    <li class="nav-item active">
+                            <a class="nav-link " href="/ask">Hỏi nhanh</a>
+                      </li>
+                      <li class="nav-item active">
+                        <a class="nav-link " href="/answer">Đáp gọn</a>
+                      </li>
+                    </nav>
+    <div class="containter">
+        <h1 class = "text-center" id="questionContent"></h1>
+        <p class="text-center" id="totalVote"><span></span>vote</p>
+        <div class = "row d-flex justify-content-md-center d-flex align-items-center" >
+                <p class="text-center"  id="voteYes">Yes: <span></span>%</p>
+                <p class="text-center" id="voteNo">No: <span></span>%</p>
+        </div>
+        <div class="text-center">
+                <a  href="/"> <button class="btn btn-success" id= 'otherQuestion'>Xem câu hỏi khác</button></a>
+        </div>
+        
        
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>

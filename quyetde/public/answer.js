@@ -5,8 +5,8 @@ function getRandomQuest(){
       success: function(response){
         if(response){
           $("#questionContent").text(response.questionContent);
-          $(".answer-btn").data("questionid", response.id);
-          $('#viewDetail').attr('href', '/question/' + response.id);
+          $(".answer-btn").data("questionid", response._id);
+          $('#viewDetail').attr('href', '/question/' + response._id);
           console.log(response);
         }
       },
@@ -26,7 +26,9 @@ function getRandomQuest(){
       type: 'POST',
       data: $(this).data(),
       success: function(response){
+        console.log(response)
         if(response){
+          console.log(response)
           window.location.href = "/question/" + questionId;
         }
       },

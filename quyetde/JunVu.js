@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const fs = require('fs');
 const app = express();
 const mongoose = require('mongoose');
 const QuestionModel = require('./model/questionModel')
@@ -37,7 +36,7 @@ app.post('/createquestions', (req, res) => {
         {questionContent:req.body.questionContent },
         (err, questionCreated)=>{
             if(err) console.log(err)
-            else res.redirect('/question/' + questionCreated._id);
+            else res.redirect('/question/' + questionCreated.id);
 
         }
     )
@@ -46,26 +45,30 @@ app.post('/createquestions', (req, res) => {
 });
 
 app.get('/randomquestion', (req, res) => {
-    //findOne
-    let questionList = JSON.parse(fs.readFileSync('./questions.json'));
+    QuestionModel.count({}, (err, count) => {
+		let randomIndex = Math.floor(Math.random()*count);
+		QuestionModel.findOne({}, null, { skip: randomIndex }, (err, questionFound) => {
+			if (err) console.log(err)
+			else res.send(questionFound);
+		})
+	})
 
-    if (questionList.length > 0) {
-        let randomIndex = Math.floor(Math.random() * questionList.length);
-        let questionRandom = questionList[randomIndex];
-        question = questionRandom;
-        res.send(questionRandom);
-    }
-});
+})
 
-app.post('/answer', (req, res) => {
-    const { questionid, answer } = req.body;
-    // const questionid = req.body.questionid;
-    // const answer = req.body.answer;
-    // let questionList = JSON.parse(fs.readFileSync('./questions.json'));
-    // questionList[questionid][answer] += 1;
-    // fs.writeFileSync('./questions.json', JSON.stringify(questionList));
-    // res.send({ success: 1 });
-});
+    app.post('/answer', (req, res) => {
+        let {questionid , answer} = req.body;
+        QuestionModel.findById(questionid, (err, questionFound) =>{
+            if(err) console.log(err)
+            else if (!questionFound) console.log('Not Found');
+            else {
+                questionFound[answer] +=1;
+                questionFound.save((err) => {
+                    if(err) console.log(err)
+                  else res.send({success :1});
+                })
+            }
+        });
+    });
 
 app.get('/question/:questionId', (req, res) => {
     res.sendFile(__dirname + "/public/vote.html");
@@ -73,9 +76,15 @@ app.get('/question/:questionId', (req, res) => {
 
 app.get('/questiondetail/:questionId', (req, res) => {
     let questionId = req.params.questionId;
-    let questionList = JSON.parse(fs.readFileSync('./questions.json'));
-    res.send({ success: 1, question: questionList[questionId] });
+    QuestionModel.findById(questionId, (err, questionFound) =>{
+        if(err) console.log(err)
+        else if (!questionFound) console.log('Not Found');
+        else {
+                res.send({ success: 1, question: questionFound })
+        };
+    });
 });
+
 
 app.use(express.static('public'));
 
