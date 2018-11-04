@@ -19,6 +19,8 @@ app.use("/api/users", userRouter);
 
 app.use("/api/images", imageRouter);
 
+app.use("/api/comments", commentRouter);
+
 app.get('/api', (res, req) => {
     res.send("API router");
 })
