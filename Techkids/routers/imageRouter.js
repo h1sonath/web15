@@ -57,4 +57,12 @@ ImageRouter.put("/:id", (req, res) =>{
         })
     })
 })
+
+ImageRouter.delete("/:id", (req, res) =>{
+    const imageId = req.params.id;
+    ImageModel.remove(imageId, (err)=>{
+        if (err) res.status(500).json({success: 0, message: err})
+        else res.json({success: 1})
+    })
+})
 module.exports = ImageRouter;

@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 
 const userRouter = require('./routers/userRouter');
 const imageRouter = require('./routers/imageRouter');
+const commentRouter = require('./routers/commentRouter');
 
 
 mongoose.connect("mongodb://localhost/techkidhotgirl", (err) => {

@@ -57,4 +57,12 @@ UserRouter.put("/:id", (req, res) =>{
         })
     })
 })
+
+    UserRouter.delete("/:id", (req, res) =>{
+        const userId = req.params.id;
+        UserModel.remove(userId, (err)=>{
+            if (err) res.status(500).json({success: 0, message: err})
+            else res.json({success: 1})
+        })
+    })
 module.exports = UserRouter;
