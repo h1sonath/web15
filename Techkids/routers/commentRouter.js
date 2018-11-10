@@ -1,59 +1,73 @@
 const express = require('express');
 const CommentRouter = express.Router();
+const CommentModel = require('../models/commentModel');
 
-const CommentModel = require('../models/CommentModel');
 
-CommentRouter.use((req, res, next) => {
-    console.log("Comment middleware");
-    next();
+// CommentRouter.use((req, res, next) => {
+//     console.log("User middleware");
+//     next();
+// });
+
+CommentRouter.get("/", async (req, res) => {
+    try {
+        const comments = await CommentModel.find({}).populate("user", "name avatar");
+        res.json({ success: 1, comments });
+    }
+    catch (err) {
+        res.status(500).json({ success: 0, message: err });
+    }
 });
 
-CommentRouter.get("/", (req, res) => {
-    CommentModel.find({}, (err, Comments) => {
-        if (err) res.status(500).json({ success: 0, error: err })
-        else res.json({ success: 1, comments });
-    });
+CommentRouter.get("/:id", async (req, res) => {
+    let commentId = req.params.id;
+    try {
+        const commentFound = await CommentModel.findById(commentId).populate("user", "name avatar");
+        if (!commentFound) res.status(404).json({ success: 0, message: "Not Found" })
+        else res.json({ success: 1, comment: commentFound })
+    }
+    catch (err) {
+        res.status(500).json({ success: 0, message: err })
+    }
 });
 
 CommentRouter.post("/", (req, res) => {
+    const { user, content } = req.body;
     console.log(req.body);
-    const { Comment, view, like, url, caption, title, comments } = req.body;
-    CommentModel.create({ Comment, view, like, url, caption, title, comments }, (err, commentCreated) => {
-        if (err) res.status(500).json({ success: 0, error: err })
-        else res.status(201).json({ success: 1, comments: commentCreated });
-    });
+
+    CommentModel.create({ user, content }, (err, commentCreated) => {
+        if (err) res.status(500).json({ success: 0, message: err })
+        else res.status(201).json({ success: 1, comment: commentCreated })
+    })
 });
 
-CommentRouter.put("/:id", (req, res) => {
-    const commentId = req.params.id;
-    const { Comment, view , like, url, caption, title, comments } = req.body;
-    // CommentModel.findByIdAndUpdate(CommentId, { name, password, avatar, intro }, { new: true }, (err, CommentUpdated) => {
-    //     if (err) res.status(500).json({ success: 0, message: err })
-    //     else res.json({ success: 1, Comments: CommentUpdated });
-    // });
-    CommentModel.findById(commentId, (err, commentFound) => {
-        if (err) res.status(500).json({ success: 0, message: err })
-        else if (!commentFound._id) res.status(404).json({ success: 0, message: "Not found" })
+CommentRouter.put("/:id", async (req, res) => {
+    let commentId = req.params.id;
+    const { user, content } = req.body;
+    try {
+        const commentFound = await CommentModel.findById(commentId);
+        if (!commentFound) res.status(404).json({ success: 0, message: "Not Found" })
         else {
-            for (key in { Comment, view , like, url, caption, title, comments }) {
+            for (key in { user, content }) {
                 if (commentFound[key] && req.body[key]) commentFound[key] = req.body[key];
             }
-
-            commentFound.save((err, commentUpdated) => {
-                if (err) res.status(500).json({ success: 0, message: err })
-                else res.status(201).json({ success: 1, comments: commentUpdated });
-            });
-        };
-    });
+            let commentUpdated = await commentFound.save();
+            res.status(201).json({ success: 1, comment: commentUpdated })
+        }
+    }
+    catch (err) {
+        res.status(500).json({ success: 0, message: err });
+    }
 });
 
-CommentRouter.delete("/:id", (req, res) =>{
-    const commentId = req.params.id;
-    CommentModel.remove(commentId, (err)=>{
-        if (err) res.status(500).json({success: 0, message: err})
-        else res.json({success: 1})
-    })
-})
-
+CommentRouter.delete("/:id", async (req, res) => {
+    var commentId = req.params.id;
+    try {
+        await CommentModel.findByIdAndRemove(commentId);
+        res.json({ success: 1 });
+    }
+    catch (err) {
+        res.status(500).json({ success: 0, message: err });
+    }
+});
 
 module.exports = CommentRouter;
