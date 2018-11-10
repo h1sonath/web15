@@ -1,14 +1,19 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+
 const ImageSchema = new Schema({
-    name: { type: String, required:true},
-    view: { type: Number,  default:0},
-    title: { type: String, required:true},
-    like: { type: Number, default:0},
-    url: { type: String, required: true},
-    caption: {type: String},
-    comments: [{ type: String }]
-}, { 
-    timestamps: true
-});
-module.exports = mongoose.model("Image", ImageSchema);
+    user: { type: Schema.Types.ObjectId, ref: "User" },
+    view: { type: Number, default: 0 },
+    like: { type: Number, default: 0 },
+    url: { type: String, required: true },
+    caption: { type: String },
+    title: { type: String, required: true },
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+    },
+    {
+        timestamps: true
+    });
+
+const ImageModel = mongoose.model("Image", ImageSchema);
+
+module.exports = ImageModel;
